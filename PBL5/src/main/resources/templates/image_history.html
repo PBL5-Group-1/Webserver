@@ -4,27 +4,60 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Lịch sử chụp ảnh</title>
-<!--    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"-->
-<!--          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">-->
-    <link href="../static/bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="../static/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!--    <link href="../static/bootstrap-5.0.2-dist/css/bootstrap.min.css" rel="stylesheet">-->
+    <!--    <script src="../static/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
             crossorigin="anonymous">
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script th:src="@{/js/imagetodata.js}"></script>
-    <script src="./js/imagetodata.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
+    <!--    <script th:src="@{/js/imagetodata.js}"></script>-->
+    <!--    <script src="../static/js/imagetodata.js"></script>-->
 </head>
 <body>
-<div class="row">
-    <div class="col-1"></div>
-    <div class="col-10">
+<div style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: gainsboro; z-index: -1;"></div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="width: 100%">
+    <a class="navbar-brand" th:href="@{/image}" style="margin-left: 10%; font-weight: bolder">Trang chủ</a>
+    <!--    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">-->
+    <!--        <span class="navbar-toggler-icon"></span>-->
+    <!--    </button>-->
+    <!--    <div class="collapse navbar-collapse" id="navbarNav">-->
+    <!--        <ul class="navbar-nav">-->
+    <!--            <li class="nav-item active">-->
+    <!--                <a class="nav-link" href="#">Trang chủ</a>-->
+    <!--            </li>-->
+    <!--            <li class="nav-item">-->
+    <!--                <a class="nav-link" href="#">Dịch vụ</a>-->
+    <!--            </li>-->
+    <!--            <li class="nav-item">-->
+    <!--                <a class="nav-link" href="#">Sản phẩm</a>-->
+    <!--            </li>-->
+    <!--            <li class="nav-item">-->
+    <!--                <a class="nav-link" href="#">Giới thiệu</a>-->
+    <!--            </li>-->
+    <!--            <li class="nav-item">-->
+    <!--                <a class="nav-link" href="#">Liên hệ</a>-->
+    <!--            </li>-->
+    <!--        </ul>-->
+    <!--    </div>-->
+</nav>
+<div class="row" style="height: 100%; width: 97%">
+    <div class="col-1" style="width: 9%"></div>
+    <div class="col-10" style="background-color: white">
         <h1>Lịch sử chụp ảnh</h1>
-        <img id="imageInput1" width="100px"
-             src="https://png.pngtree.com/png-clipart/20230413/original/pngtree-puppy-cartoon-happy-little-black-dog-png-image_9051799.png"
-             alt="Image">
-        <!--        <a th:href="@{/image/capture}">-->
+        <!--        <img id="imageInput" width="100px"-->
+        <!--             src="https://cdn.thuvienphapluat.vn/phap-luat/2022/202201/Giang/H%C3%ACnh%20b%C3%A0i%20vi%E1%BA%BFt%20TVPL/%E1%BA%A3nh%2016032022/giao-thong%202%20(1).jpg"-->
+        <!--             alt="Image">-->
+        <!--        <img id="imageInput1" width="100px"-->
+        <!--             src="https://raw.githubusercontent.com/PBL5-Group-1/Webserver/master/PBL5/src/main/resources/static/images/image.jpg"-->
+        <!--             alt="Image">-->
+        <!--        <input type="file" id="imageInput2" accept="image/*">-->
+        <!--        <button id="uploadButton" onclick="send()">Upload Image</button>-->
+
         <a>
             <button class="btn btn-primary" id="captureBtn" onclick="captureImage()" data-bs-toggle="modal"
                     data-bs-dismiss="modal"
@@ -35,22 +68,27 @@
         <p class="text-danger" id="mess" th:text="${mess}"></p>
         <table class="table table-striped">
             <tr>
-                <th>STT</th>
-                <th>Ảnh</th>
-                <th>Thời gian chụp</th>
-                <th>Số lượng</th>
-                <th>Lựa chọn</th>
+                <th class="text-center">STT</th>
+                <th class="text-center">Ảnh</th>
+                <th class="text-center">Thời gian chụp</th>
+                <th class="text-center">Số lượng</th>
+                <th class="text-center">Lựa chọn</th>
             </tr>
             <th:block th:each="history, row: ${historyList}">
                 <tr>
-                    <td th:text="${row.count}"></td>
-                    <td>
-                        <img th:src="'data:image/png;base64,' + ${history.getImage()}" alt="Cover" height="80"
+                    <td th:text="${row.count}" class="text-center" style="vertical-align: middle; font-weight: bolder"></td>
+                    <td class="text-center">
+                        <img th:src="'data:image/png;base64,' + ${history.getImage()}" alt="Cover" height="125"
                              width="200">
                     </td>
-                    <td th:text="${history.getTime()}"></td>
-                    <td th:text="${history.getAmount()}"></td>
-                    <td>
+                    <td th:text="${history.getTime()}" class="text-center" style="vertical-align: middle"></td>
+                    <td th:text="${history.getAmount()}" class="text-center" style="vertical-align: middle"></td>
+                    <td class="text-center" style="vertical-align: middle">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#detailModal"
+                                th:attr="onclick=|detailItem('${history.getTime()}',
+                                 '${history.getImage()}', '${history.getAmount()}')|">Chi tiết
+                        </button>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#deleteModal"
                                 th:attr="onclick=|deleteItem('${history.getId()}')|">Xoá
@@ -69,8 +107,28 @@
         <button id="btn" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
                 data-bs-toggle="modal" data-bs-target="#deleteModals">Xoá nhiều
         </button>
+        <nav>
+            <ul class="pagination justify-content-center">
+                <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                    <a class="page-link" th:href="@{/image?page=1}">Đầu</a>
+                </li>
+                <li th:class="${currentPage == 1} ? 'page-item disabled' : 'page-item'">
+                    <a class="page-link" th:href="@{/image(page=${currentPage - 1})}">Trước</a>
+                </li>
+                <li th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+                    th:class="${currentPage == pageNumber} ? 'page-item active' : 'page-item'">
+                    <a class="page-link" th:href="@{/image(page=${pageNumber})}" th:text="${pageNumber}"></a>
+                </li>
+                <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                    <a class="page-link" th:href="@{/image(page=${currentPage + 1})}">Sau</a>
+                </li>
+                <li th:class="${currentPage == totalPages} ? 'page-item disabled' : 'page-item'">
+                    <a class="page-link" th:href="@{/image(page=${totalPages})}">Cuối</a>
+                </li>
+            </ul>
+        </nav>
     </div>
-    <div class="col-1"></div>
+    <div class="col-1" style="width: 7%"></div>
 </div>
 <!--Modal delete-->
 <div class="modal fade" id="deleteModal" data-bs-backdrop="static" data-bs-keyboard="false"
@@ -85,7 +143,7 @@
             <div class="modal-body">
                 Bạn có muốn xoá ảnh này không?
             </div>
-            <form action="/images/delete" method="get">
+            <form action="/image/delete" method="get">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng
                     </button>
@@ -94,6 +152,29 @@
                     <input hidden name="action" value="delete" type="text" id="">
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+<!--Modal detail-->
+<div class="modal fade" id="detailModal" data-bs-backdrop="static" data-bs-keyboard="false"
+     tabindex="-1" aria-labelledby="staticBackdropLabel5" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel5">Chi tiết ảnh</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img src="" alt="Ảnh" id="image" width="450px" height="auto"><br>
+                <p id="timeImage"></p>
+                <p id="amountImage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng
+                </button>
+                <!--                    <button type="submit" class="btn btn-danger">Xoá</button>-->
+            </div>
         </div>
     </div>
 </div>
@@ -110,7 +191,7 @@
             <div class="modal-body">
                 Bạn có muốn xoá những hàng đã chọn không?
             </div>
-            <form action="/images/multiDelete" method="get">
+            <form action="/image/multiDelete" method="get">
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng
                     </button>
@@ -134,9 +215,9 @@
             <div class="modal-body">
                 Đang tải...
             </div>
-            <div class="modal-footer">
-                <!--                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>-->
-            </div>
+            <!--            <div class="modal-footer">-->
+            <!--                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>-->
+            <!--            </div>-->
         </div>
     </div>
 </div>
@@ -149,10 +230,12 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel3">Chụp ảnh thành công</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                        aria-label="Close" onclick="location.reload()"></button>
             </div>
             <div class="modal-body">
-                Thành công!
+                <p>Thành công!</p>
+                <img src="" alt="" id="newImage" width="450px" height="auto">
+                <p id="newAmount"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="location.reload()">
@@ -197,6 +280,12 @@
     function deleteItem(id) {
         document.getElementById('idDelete').value = id;
     }
+
+    function detailItem(time, image, amount) {
+        document.getElementById('image').src = 'data:image/png;base64,' + image;
+        document.getElementById('timeImage').innerText = 'Thời gian chụp: ' + time;
+        document.getElementById('amountImage').innerText = 'Số lượng: ' + amount;
+    }
 </script>
 <script>
     let request;
@@ -211,28 +300,160 @@
         console.log(loadingModalVisible);
 
         request = new XMLHttpRequest();
-        let URL = "http://172.20.10.2";
+        let URL = "http://192.168.72.227";
+        let URL1 = "http://localhost:8080/image/check-update"
+
         request.open("GET", URL + "/takepicture", true);
         request.onload = function () {
+            console.log("Đây là onload");
             if (request.status === 200) {
                 console.log(request.responseText);
-                // closeModal("loadingModal");
-                // openModal("successModal");
-
+                checkUpdate(URL1);
+                // checkUpdate(URL1);
             } else {
+                checkUpdate(URL1)
                 closeModal("loadingModal");
                 openModal("failedModal");
                 console.log("Request failed. Status: " + request.status);
             }
         };
         request.onerror = function () {
+            checkUpdate(URL1);
+            // console.log("Đây là onerror");
             // closeModal("loadingModal");
             // openModal("failedModal");
-            console.log("An error occurred while sending the request.");
-            let image = document.getElementById("imageInput");
-            saveImage(image);
+            // console.log("An error occurred while sending the request.");
+            // saveImage();
+            // checkUpdate(URL1);
         };
         request.send();
+    }
+
+    function checkUpdate(URL) {
+        const interval = setInterval(() => {
+            let request1 = new XMLHttpRequest();
+            request1.open("GET", URL, true);
+            request1.onload = function () {
+                if (request.status === 200) {
+                    console.log("Đây là 200")
+                    console.log(request1.responseText);
+                    clearInterval(interval);
+                    // let responseJson = JSON.parse(request1.responseText);
+                    // let image = responseJson.image;
+                    // let amount = responseJson.amount;
+                    // document.getElementById('newImage').src = 'data:image/png;base64,' + image;
+                    // document.getElementById('newAmount').innerText = 'Số lượng: ' + amount;
+                    closeModal("loadingModal");
+                    closeModal("failedModal");
+                    openModal("successModal");
+                } else {
+                    // closeModal("loadingModal");
+                    // openModal("failedModal");
+                    // console.log("Request failed. Status: " + request1.status);
+                    clearInterval(interval);
+                    console.log(JSON.parse(request1.responseText));
+                    let responseJson = JSON.parse(request1.responseText);
+                    let image = responseJson.image;
+                    let amount = responseJson.amount;
+                    document.getElementById('newImage').src = 'data:image/png;base64,' + image;
+                    document.getElementById('newAmount').innerText = 'Số lượng: ' + amount;
+                    closeModal("loadingModal");
+                    closeModal("failedModal");
+                    openModal("successModal");
+                }
+            }
+            request1.onerror = function () {
+                // console.log("Lỗi?")
+                clearInterval(interval);
+                // console.log(request1.responseText);
+                // let responseJson = JSON.parse(request1.responseText);
+                // if (request1.responseText != null || request1.responseText != undefined ||request1.responseText != "" || request1.responseText.includes('a')) {
+                // }
+                // let image = responseJson.image;
+                // let amount = responseJson.amount;
+                // document.getElementById('newImage').src = 'data:image/png;base64,' + image;
+                // document.getElementById('newAmount').innerText = 'Số lượng: ' + amount;
+                // let request2 = new XMLHttpRequest();
+                // request2.open("GET", URL, true);
+                // request2.onload = function () {
+                //     console.log("Onload trong onerror.");
+                // }
+                // request2.onerror = function () {
+                //     console.log("đang lỗi ở đây");
+                //     //TODO sửa lí do không gửi được request tới backend tại /image/check-update
+                //     //TODO in ra 1 con số được gửi từ backend tới frontend
+                // }
+                // request2.send();
+                closeModal("loadingModal");
+                closeModal("failedModal");
+                openModal("successModal");
+                console.log("An error occurred while sending the request.");
+            };
+            request1.send();
+        }, 2000);
+    }
+
+    // function convertImageToByteArray(imageFile) {
+    //     return new Promise((resolve, reject) => {
+    //         html2canvas(imageFile)
+    //             .then((canvas) => {
+    //                 canvas.toBlob((blob) => {
+    //                     const reader = new FileReader();
+    //                     reader.onloadend = () => {
+    //                         const arrayBuffer = reader.result;
+    //                         const uintArray = new Uint8Array(arrayBuffer);
+    //                         resolve(Array.from(uintArray));
+    //                     };
+    //                     reader.onerror = (event) => {
+    //                         reject(event.target.error);
+    //                     };
+    //                     reader.readAsArrayBuffer(blob);
+    //                 });
+    //             })
+    //             .catch((error) => {
+    //                 reject(error);
+    //             });
+    //     });
+    // }
+
+    function saveImage() {
+        // const imageData = convertImageToByteArray(image); // Đây là mảng byte hình ảnh đã được chuyển đổi
+        let image = document.getElementById("imageInput2");
+        const imageData = image.files[0];
+
+        const formData = new FormData();
+        formData.append('file', imageData);
+
+        const extraData = 0; // Giá trị dữ liệu bổ sung
+
+        fetch('/image/receive1', {
+            method: 'POST',
+            headers: {
+                // 'Content-Type': 'application/octet-stream', // Loại dữ liệu là mảng byte
+                // 'Content-Type': 'multipart/form-data', // Loại dữ liệu là mảng byte
+                'X-Extra-Data': extraData // Thông tin bổ sung trong tiêu đề
+            },
+            body: formData
+        })
+            .then((response) => {
+                if (response.ok) {
+                    // Xử lý phản hồi thành công
+                    console.log('Yêu cầu đã được gửi thành công');
+                    closeModal("loadingModal");
+                    openModal("successModal");
+                } else {
+                    // Xử lý phản hồi lỗi
+                    console.error('Lỗi khi gửi yêu cầu');
+                    closeModal("loadingModal");
+                    openModal("failedModal");
+                }
+            })
+            .catch((error) => {
+                // Xử lý lỗi trong quá trình gửi yêu cầu
+                console.error('Lỗi khi gửi yêu cầu:', error);
+                closeModal("loadingModal");
+                openModal("failedModal");
+            });
     }
 
     // Hàm để mở modal
@@ -269,5 +490,36 @@
             modalBackdrop.remove();
         }
     }
+
+    // function send() {
+    //     var fileInput = document.getElementById('imageInput2');
+    //     var file = fileInput.files[0];
+    //     if (!file) {
+    //         console.error('No file selected.');
+    //         return;
+    //     }
+    //
+    //     var formData = new FormData();
+    //     formData.append('imageData', file);
+    //
+    //     fetch('/image/receive', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/octet-stream',
+    //             'X-Extra-Data': 123 // Example of extra data
+    //         },
+    //         body: formData
+    //     })
+    //         .then(response => {
+    //             if (response.ok) {
+    //                 console.log('Image uploaded successfully.');
+    //             } else {
+    //                 console.error('Failed to upload image.');
+    //             }
+    //         })
+    //         .catch(error => {
+    //             console.error('Error:', error);
+    //         });
+    // }
 </script>
 </html>

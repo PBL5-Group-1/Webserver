@@ -8,7 +8,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,9 +18,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -27,70 +32,95 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 @Controller
 @RequestMapping("/image")
 public class ImageController {
     public static final String URL = "http://172.20.10.2";
     private static final String IMAGE_FOLDER_PATH = "E:/image/history";
+
+    private static final int IMAGES_PER_PAGE = 4;
+
     @Autowired
     private IHistoryService historyService;
-
-//    @PostMapping("/receive")
-//    public ResponseEntity<String> receivePicture(MultipartFile file) {
-//        try {
-//            // Create a folder named "pictures" if it doesn't exist
-//            String picturesFolder = "E:/image/history";
-//            File folder = new File(picturesFolder);
-//            folder.mkdirs();
-//
-//            // Generate a unique filename based on the current timestamp
-//            LocalDateTime currentTime = LocalDateTime.now();
-//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-//            DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-//            String timestamp = currentTime.format(formatter);
-//            String timestamp1 = currentTime.format(formatter1);
-//            String filename = timestamp + ".jpg";
-//
-//            // Save the image to the "pictures" folder
-//            File imageFile = new File(folder, filename);
-//            FileCopyUtils.copy(file.getBytes(), Files.newOutputStream(imageFile.toPath()));
-//
-//            String imagePath = imageFile.getAbsolutePath();
-//            System.out.println("Image saved to: " + imagePath);
-//
-//            // Chuyển đổi byte thành chuỗi base64
-//            Path path = Paths.get(imagePath);
-//            byte[] imageBytes = Files.readAllBytes(path);
-////            String base64String = Base64.encodeBase64String(imageBytes);
-//            String base64String = Base64.getEncoder().encodeToString(imageBytes);
-//
-//            History history = new History();
-//            history.setTime(timestamp1);
-//            history.setImage(base64String);
-//            history.setAmount(10);
-//            historyService.save(history);
-//
-//            // In chuỗi base64
-//            System.out.println(base64String);
-//
-//            return ResponseEntity.ok("Image received and saved successfully!");
-//        } catch (IOException e) {
-//            System.out.println("Error: " + e.getMessage());
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the image.");
-//        }
-//    }
 
     public static String removeCharAt(String s, int pos) {
         return s.substring(0, pos) + s.substring(pos + 1);
     }
 
+    @PostMapping("/receive1")
+    public ResponseEntity<String> receivePicture(
+            @RequestBody MultipartFile file,
+            @RequestHeader("X-Extra-Data") int extraData) {
+        try {
+            // Create a folder named "pictures" if it doesn't exist
+            String picturesFolder = "E:/image/history";
+            File folder = new File(picturesFolder);
+            folder.mkdirs();
+
+            // Generate a unique filename based on the current timestamp
+            LocalDateTime currentTime = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+            DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+            String timestamp = currentTime.format(formatter);
+            String timestamp1 = currentTime.format(formatter1);
+            String filename = timestamp + ".jpg";
+
+            // Save the image to the "pictures" folder
+            File imageFile = new File(folder, filename);
+            FileCopyUtils.copy(file.getBytes(), Files.newOutputStream(imageFile.toPath()));
+
+            String imagePath = imageFile.getAbsolutePath();
+            System.out.println("Image saved to: " + imagePath);
+
+            // Chuyển đổi byte thành chuỗi base64
+            Path path = Paths.get(imagePath);
+            byte[] imageBytes = Files.readAllBytes(path);
+//            String base64String = Base64.encodeBase64String(imageBytes);
+            String base64String = Base64.getEncoder().encodeToString(imageBytes);
+
+            History history = new History();
+            history.setTime(timestamp1);
+            history.setImage(base64String);
+            history.setAmount(extraData);
+            history.setShowed(false);
+            historyService.save(history);
+
+            // In chuỗi base64
+            System.out.println(base64String);
+
+            return ResponseEntity.ok("Image received and saved successfully!");
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the image.");
+        }
+    }
+
+    @CrossOrigin
+    @GetMapping("/check-update")
+    public ResponseEntity<String> checkUpdate() {
+        List<History> newImageList = historyService.checkNewImage();
+        if (!newImageList.isEmpty()) {
+            System.out.println("Có ảnh mới");
+            History newImage = newImageList.get(0);
+            JSONObject responseJson = new JSONObject();
+            responseJson.put("image", newImage.getImage());
+            responseJson.put("amount", newImage.getAmount());
+            return ResponseEntity.ok(responseJson.toString());
+        } else {
+            System.out.println("Đây là else.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("There's no new image.");
+        }
+    }
     @PostMapping("/receive")
     public ResponseEntity<String> receiveImage(
             @RequestBody byte[] imageData,
             @RequestHeader("X-Extra-Data") int extraData) {
-
+//        System.out.println(imageData);
+        System.out.println("Hello");
         try {
             // Create the folder if it doesn't exist
             Path imageFolderPath = Paths.get(IMAGE_FOLDER_PATH);
@@ -116,7 +146,7 @@ public class ImageController {
 
             // Encode the byte array to Base64
             String base64Encoded = Base64.getEncoder().encodeToString(imageBytes);
-            System.out.println(base64Encoded);
+//            System.out.println("Base64: " + base64Encoded);
 
             History history = new History();
             history.setTime(time);
@@ -136,7 +166,7 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to process the image.");
         }
     }
-
+    @CrossOrigin
     @GetMapping("/capture")
     public ResponseEntity<String> capturePhotoFromESP32(Model model, RedirectAttributes redirectAttributes) throws IOException {
         try {
@@ -172,15 +202,29 @@ public class ImageController {
         }
     }
 
+//    @GetMapping("")
+//    public String showList(Model model,
+//                           @RequestParam(required = false, defaultValue = "") String timeBegin,
+//                           @RequestParam(required = false, defaultValue = "") String timeEnd,
+//                           @RequestParam(defaultValue = "0") int page) {
+//        Pageable pageable = PageRequest.of(page, 5, Sort.by("time").descending());
+//        historyService.setAllHistoryShowed();
+//        model.addAttribute("historyList", historyService.findAll());
+//        model.addAttribute("mess", "");
+//        return "image_history";
+//    }
+
     @GetMapping("")
     public String showList(Model model,
-                           @RequestParam(required = false, defaultValue = "") String timeBegin,
-                           @RequestParam(required = false, defaultValue = "") String timeEnd,
-                           @RequestParam(defaultValue = "0") int page) {
-        Pageable pageable = PageRequest.of(page, 5, Sort.by("time").descending());
+                           @RequestParam(defaultValue = "1") int page){
         historyService.setAllHistoryShowed();
-        model.addAttribute("historyList", historyService.findAll());
+        Page<History> historyPage = historyService.getAllHistory(page, IMAGES_PER_PAGE);
+        int totalPages = historyPage.getTotalPages();
+        List<History> items = historyPage.getContent();
         model.addAttribute("mess", "");
+        model.addAttribute("historyList", items);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
         return "image_history";
     }
 
@@ -208,6 +252,6 @@ public class ImageController {
             historyService.remove(history);
         }
         redirectAttributes.addFlashAttribute("mess", "Đã xoá thành công");
-        return "redirect:/list";
+        return "redirect:/image";
     }
 }

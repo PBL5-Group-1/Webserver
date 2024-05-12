@@ -1,15 +1,23 @@
 function convertImageToByteArray(imageFile) {
     return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const arrayBuffer = event.target.result;
-            const uintArray = new Uint8Array(arrayBuffer);
-            resolve(Array.from(uintArray));
-        };
-        reader.onerror = (event) => {
-            reject(event.target.error);
-        };
-        reader.readAsArrayBuffer(imageFile);
+        html2canvas(imageFile)
+            .then((canvas) => {
+                canvas.toBlob((blob) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        const arrayBuffer = reader.result;
+                        const uintArray = new Uint8Array(arrayBuffer);
+                        resolve(Array.from(uintArray));
+                    };
+                    reader.onerror = (event) => {
+                        reject(event.target.error);
+                    };
+                    reader.readAsArrayBuffer(blob);
+                });
+            })
+            .catch((error) => {
+                reject(error);
+            });
     });
 }
 

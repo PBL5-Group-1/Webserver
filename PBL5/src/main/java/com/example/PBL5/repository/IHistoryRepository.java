@@ -9,11 +9,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface IHistoryRepository extends JpaRepository<History, Integer> {
 //    @Modifying
 //    @Query(value = "SELECT * FROM `history` WHERE STR_TO_DATE(`time`, '%Y-%m-%d %H:%i:%s') BETWEEN ?1 AND  ?2", nativeQuery = true)
-//    Page<History> findByTime(String timeBegin, String timeEnd, Pageable pageable);
+    Page<History> findAll(Pageable pageable);
+
+    @Modifying
+    @Query(value = "SELECT * FROM `history` WHERE `showed` = 0", nativeQuery = true)
+    List<History> checkNewImage();
 
     @Modifying
     @Transactional
