@@ -15,48 +15,20 @@
     </script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
-    <!--    <script th:src="@{/js/imagetodata.js}"></script>-->
-    <!--    <script src="../static/js/imagetodata.js"></script>-->
+
 </head>
+
 <body>
 <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: gainsboro; z-index: -1;"></div>
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light" style="width: 100%">
     <a class="navbar-brand" th:href="@{/image}" style="margin-left: 10%; font-weight: bolder">Trang chủ</a>
-    <!--    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">-->
-    <!--        <span class="navbar-toggler-icon"></span>-->
-    <!--    </button>-->
-    <!--    <div class="collapse navbar-collapse" id="navbarNav">-->
-    <!--        <ul class="navbar-nav">-->
-    <!--            <li class="nav-item active">-->
-    <!--                <a class="nav-link" href="#">Trang chủ</a>-->
-    <!--            </li>-->
-    <!--            <li class="nav-item">-->
-    <!--                <a class="nav-link" href="#">Dịch vụ</a>-->
-    <!--            </li>-->
-    <!--            <li class="nav-item">-->
-    <!--                <a class="nav-link" href="#">Sản phẩm</a>-->
-    <!--            </li>-->
-    <!--            <li class="nav-item">-->
-    <!--                <a class="nav-link" href="#">Giới thiệu</a>-->
-    <!--            </li>-->
-    <!--            <li class="nav-item">-->
-    <!--                <a class="nav-link" href="#">Liên hệ</a>-->
-    <!--            </li>-->
-    <!--        </ul>-->
-    <!--    </div>-->
 </nav>
+
 <div class="row" style="height: 100%; width: 97%">
     <div class="col-1" style="width: 9%"></div>
     <div class="col-10" style="background-color: white">
         <h1>Lịch sử chụp ảnh</h1>
-        <!--        <img id="imageInput" width="100px"-->
-        <!--             src="https://cdn.thuvienphapluat.vn/phap-luat/2022/202201/Giang/H%C3%ACnh%20b%C3%A0i%20vi%E1%BA%BFt%20TVPL/%E1%BA%A3nh%2016032022/giao-thong%202%20(1).jpg"-->
-        <!--             alt="Image">-->
-        <!--        <img id="imageInput1" width="100px"-->
-        <!--             src="https://raw.githubusercontent.com/PBL5-Group-1/Webserver/master/PBL5/src/main/resources/static/images/image.jpg"-->
-        <!--             alt="Image">-->
-        <!--        <input type="file" id="imageInput2" accept="image/*">-->
-        <!--        <button id="uploadButton" onclick="send()">Upload Image</button>-->
 
         <a>
             <button class="btn btn-primary" id="captureBtn" onclick="captureImage()" data-bs-toggle="modal"
@@ -76,7 +48,8 @@
             </tr>
             <th:block th:each="history, row: ${historyList}">
                 <tr>
-                    <td th:text="${row.count}" class="text-center" style="vertical-align: middle; font-weight: bolder"></td>
+                    <td th:text="${row.count}" class="text-center"
+                        style="vertical-align: middle; font-weight: bolder"></td>
                     <td class="text-center">
                         <img th:src="'data:image/png;base64,' + ${history.getImage()}" alt="Cover" height="125"
                              width="200">
@@ -166,7 +139,7 @@
                         aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <img src="" alt="Ảnh" id="image" width="450px" height="auto"><br>
+                <img src="" alt="Ảnh" id="image" width="450px" height="auto" style="font-weight: "><br>
                 <p id="timeImage"></p>
                 <p id="amountImage"></p>
             </div>
@@ -184,7 +157,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel1">Đang chụp ảnh</h5>
+                <h5 class="modal-title" id="staticBackdropLabel1">Xóa nhiều</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                         aria-label="Close"></button>
             </div>
@@ -213,11 +186,9 @@
                         aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Đang tải...
+
+                <p id="loadingText" style="font-size: larger">Đang tải...</p>
             </div>
-            <!--            <div class="modal-footer">-->
-            <!--                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Đóng</button>-->
-            <!--            </div>-->
         </div>
     </div>
 </div>
@@ -293,6 +264,7 @@
     console.log(loadingModalVisible);
 
     function captureImage() {
+        loadingText();
         let loadingModal = document.getElementById("loadingModal");
         var bootstrapLoadingModal = new bootstrap.Modal(loadingModal);
 
@@ -300,12 +272,12 @@
         console.log(loadingModalVisible);
 
         request = new XMLHttpRequest();
-        let URL = "http://192.168.72.227";
+        let URL = "http://172.20.10.4";
         let URL1 = "http://localhost:8080/image/check-update"
 
         request.open("GET", URL + "/takepicture", true);
         request.onload = function () {
-            console.log("Đây là onload");
+            // console.log("Đây là onload");
             if (request.status === 200) {
                 console.log(request.responseText);
                 checkUpdate(URL1);
@@ -489,6 +461,16 @@
         if (modalBackdrop) {
             modalBackdrop.remove();
         }
+    }
+
+    function loadingText() {
+        let dots = window.setInterval(function () {
+            let loadingText = document.getElementById("loadingText");
+            if (loadingText.innerHTML.length > 10)
+                loadingText.innerHTML = "Đang tải";
+            else
+                loadingText.innerHTML += ".";
+        }, 500);
     }
 
     // function send() {

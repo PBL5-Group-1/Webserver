@@ -39,7 +39,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/image")
 public class ImageController {
-    public static final String URL = "http://172.20.10.2";
+    public static final String URL = "http://172.20.10.4";
     private static final String IMAGE_FOLDER_PATH = "E:/image/history";
 
     private static final int IMAGES_PER_PAGE = 4;
@@ -105,7 +105,7 @@ public class ImageController {
         List<History> newImageList = historyService.checkNewImage();
         if (!newImageList.isEmpty()) {
             System.out.println("Có ảnh mới");
-            History newImage = newImageList.get(0);
+            History newImage = newImageList.get(newImageList.size() - 1);
             JSONObject responseJson = new JSONObject();
             responseJson.put("image", newImage.getImage());
             responseJson.put("amount", newImage.getAmount());
